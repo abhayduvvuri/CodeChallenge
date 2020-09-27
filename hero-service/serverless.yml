@@ -1,0 +1,49 @@
+service:
+  name: hero-service
+
+plugins:
+  - serverless-bundle
+  - serverless-pseudo-parameters
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: ap-southeast-2
+  environment:
+    HEROES_TABLE_NAME: ${self:custom.HeroesTable.name}
+  iamRoleStatements:
+    - ${file(iam/HeroesTableIAM.yml):HeroesTableIAM}
+resources:
+  Resources:
+    HeroesTable: ${file(resources/HeroesTable.yml):HeroesTable}
+functions:
+  createHero:
+    handler: src/handlers/createHero.handler
+    events:
+      - http:
+          method: POST
+          path: /heroes
+          cors: true # <-- CORS!
+  getHeroes:
+    handler: src/handlers/getHeroes.handler
+    events:
+      - http:
+          method: GET
+          path: /heroes
+          cors: true # <-- CORS!
+  getHero:
+    handler: src/handlers/getHero.handler
+    events:
+      - http:
+          method: GET
+          path: /heroes/{id}
+          cors: true # <-- CORS!
+
+custom:
+  HeroesTable:
+    name: !Ref HeroesTable
+    arn: !GetAtt HeroesTable.Arn
+  bundle:
+    linting: false

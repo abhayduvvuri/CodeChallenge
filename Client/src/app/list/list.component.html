@@ -1,0 +1,15 @@
+<table>
+  <thead></thead>
+  <tbody>
+    <div *ngFor="let hero of heroes">
+      <div class="card" style="width: 18rem;">
+        <a routerLink="/heroes/{{hero.id}}">
+          <img src="{{hero.photo}}" class="card-img-top" />
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{hero.name}}</h5>
+        </div>
+      </div>
+    </div>
+  </tbody>
+</table>
